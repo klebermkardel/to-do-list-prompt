@@ -19,17 +19,25 @@ Uma função removerTarefa().
 
 */
 
+// --- Importação de Módulos ---
+// Importa e inicializa a biblioteca 'prompt-sync' para permitir a entrada de dados síncrona no terminal.
 const prompt = require('prompt-sync')();
 
-// --- ESTRUTURA DE DADOS ---
-// O array que armazenará todas as tarefas e o contador para o próximo ID.
+// --- "Banco de Dados" (em memória) ---
+// O array 'tarefas' armazenará todos os objetos de tarefa. Começa vazio.
 let tarefas = [];
+// A variável 'proximoId' garante que cada nova tarefa tenha um ID único e sequencial.
 let proximoId = 1;
 
-// --- FUNÇÕES (esqueletos) ---
+// --- FUNÇÕES DA APLICAÇÃO (CRUD) ---
+
+/**
+ * Adiciona uma nova tarefa à lista.
+ * Pede uma descrição ao usuário, valida a entrada e cria um novo objeto de tarefa.
+ */
 function adicionarTarefa() {
-    // Pede ao usuário a descrição da tarefa.
-    const descricaoDigitada = prompt("Digite a descrição da nova tarefa: ");
+    console.log("\n--- Adicionar Nova Tarefa ---");
+    const descricaoDigitada = prompt("Digite a descrição da tarefa: ");
 
     // Validação robusta: checa se a entrada é nula (Ctrl+C) ou vazia/só com espaços.
     if (!descricaoDigitada || !descricaoDigitada.trim()) {
@@ -37,69 +45,64 @@ function adicionarTarefa() {
         return; // Sai da função se a descrição for inválida.
     }
 
-    // Cria o novo objeto de tarefa com a estrutura planejada.
+    // Cria o novo objeto de tarefa com a estrutura padrão.
     const novaTarefa = {
         id: proximoId,
-        descricao: descricaoDigitada.trim(), // Salva a versão limpa
-        concluida: false // Novas tarefas sempre começam como não concluídas
+        descricao: descricaoDigitada.trim(), // Salva a versão limpa da descrição.
+        concluida: false // Novas tarefas sempre começam como não concluídas.
     };
 
-    // Adiciona o novo objeto ao nosso "banco de dados".
+    // Adiciona o novo objeto ao nosso array de tarefas.
     tarefas.push(novaTarefa);
-
-    // Incrementa o ID para a próxima tarefa ser única.
+    // Incrementa o ID para a próxima tarefa a ser criada.
     proximoId++;
 
-    // Fornece um feedback de sucesso para o usuário.
     console.log(`\n✅ Tarefa "${novaTarefa.descricao}" adicionada com sucesso!`);
 }
 
+/**
+ * Lista todas as tarefas cadastradas no console.
+ */
 function listarTarefas() {
     console.log("\n--- LISTA DE TAREFAS ---");
 
-    // Primeiro, verificamos se o array de tarefas está vazio.
-    // Se estiver, exibimos uma mensagem e saímos da função com 'return'.
+    // Primeiro, verifica se o array está vazio. Se sim, exibe uma mensagem e encerra a função.
     if (tarefas.length === 0) {
         console.log("Nenhuma tarefa cadastrada.");
         return;
     }
 
-    // Se houver tarefas, usamos o método .forEach() para percorrer cada uma.
+    // Se houver tarefas, usa o método .forEach() para iterar sobre cada uma.
     tarefas.forEach((tarefa) => {
-        // Usamos um operador ternário para definir o status visual da tarefa.
-        // Se 'tarefa.concluida' for 'true', status = "[X]". Senão, status = "[ ]".
-        const status = tarefa.concluida ? "(Concluída)" : "(Pendente)";
-        
-        // Imprimimos a tarefa formatada, mostrando o status, o ID e a descrição.
+        // Usa um operador ternário para determinar o status visual da tarefa.
+        const status = tarefa.concluida ? "[X]" : "[ ]";
+        // Imprime a tarefa formatada.
         console.log(`${status} [${tarefa.id}] - ${tarefa.descricao}`);
     });
 }
 
+/**
+ * Marca uma tarefa existente como concluída.
+ * Pede ao usuário o ID da tarefa e altera sua propriedade 'concluida' para 'true'.
+ */
 function marcarComoConcluida() {
     console.log("\n--- Marcar Tarefa como Concluída ---");
+    listarTarefas(); // Reutiliza a função de listar para mostrar as opções.
 
-    // Primeiro, checa se há tarefas para marcar. Se não houver, sai da função.
-    if (tarefas.length === 0) {
-        console.log("Nenhuma tarefa cadastrada para marcar.");
-        return;
-    }
+    if (tarefas.length === 0) return; // Sai se não houver tarefas.
 
-    // Reutilizamos a função listarTarefas() para mostrar as opções ao usuário.
-    listarTarefas();
+    const idDigitado = Number(prompt("Digite o ID da tarefa para marcar como concluída: "));
 
-    // Pede ao usuário o ID da tarefa e converte para número.
-    const idDigitado = Number(prompt("Digite o ID da tarefa que deseja marcar como concluída: "));
-
-    // Valida se o ID digitado é um número válido.
+    // Valida se o ID é um número.
     if (isNaN(idDigitado)) {
         console.log("\nErro: O ID deve ser um número.");
         return;
     }
 
-    // Usa o método .find() para encontrar a tarefa com o ID correspondente.
+    // Usa .find() para encontrar o objeto da tarefa correspondente ao ID.
     const tarefaEncontrada = tarefas.find(tarefa => tarefa.id === idDigitado);
 
-    // Verifica se a tarefa foi encontrada. .find() retorna 'undefined' se não encontrar.
+    // Se .find() não encontrar nada, ele retorna 'undefined'.
     if (!tarefaEncontrada) {
         console.log("\nErro: Tarefa com o ID informado não foi encontrada.");
     } else {
@@ -109,45 +112,45 @@ function marcarComoConcluida() {
     }
 }
 
+/**
+ * Remove uma tarefa da lista.
+ * Pede ao usuário o ID da tarefa, encontra seu índice no array e a remove.
+ */
 function removerTarefa() {
     console.log("\n--- Remover Tarefa ---");
+    listarTarefas(); // Mostra as tarefas para o usuário saber qual remover.
 
-    // Primeiro, checa se há tarefas para remover.
-    if (tarefas.length === 0) {
-        console.log("Nenhuma tarefa cadastrada para remover.");
-        return;
-    }
+    if (tarefas.length === 0) return;
 
-    // Reutilizamos a função listarTarefas() para o usuário ver os IDs.
-    listarTarefas();
+    const idDigitado = Number(prompt("Digite o ID da tarefa que você deseja remover: "));
 
-    // Pede ao usuário o ID da tarefa a ser removida.
-    const idDigitado = Number(prompt("Digite o ID da tarefa que deseja remover: "));
-
-    // Valida se o ID digitado é um número válido.
+    // Valida o ID.
     if (isNaN(idDigitado)) {
         console.log("\nErro: O ID deve ser um número.");
         return;
     }
 
-    // Usa o método .findIndex() para encontrar o ÍNDICE da tarefa com o ID correspondente.
-    // Ele retorna -1 se não encontrar.
+    // Usa .findIndex() para obter a POSIÇÃO (índice) da tarefa no array.
+    // Retorna -1 se não encontrar.
     const indiceEncontrado = tarefas.findIndex(tarefa => tarefa.id === idDigitado);
 
-    // Verifica se a tarefa foi encontrada.
+    // Se o índice for -1, a tarefa não existe.
     if (indiceEncontrado === -1) {
         console.log("\nErro: Tarefa com o ID informado não foi encontrada.");
     } else {
-        // Usa o método .splice() para remover 1 item a partir do índice encontrado.
-        // Isso modifica o array 'tarefas' original.
+        // Usa .splice() para remover 1 item a partir do índice encontrado.
         tarefas.splice(indiceEncontrado, 1);
         console.log("\n❌ Tarefa removida com sucesso!");
     }
 }
 
 // --- LÓGICA PRINCIPAL (MENU) ---
+/**
+ * Função principal que executa o menu e o loop da aplicação.
+ */
 function menu() {
     let opcao;
+    // O laço 'do...while' garante que o menu rode pelo menos uma vez.
     do {
         console.log(`
 --- GERENCIADOR DE TAREFAS ---
@@ -159,6 +162,7 @@ function menu() {
         `);
         opcao = prompt("O que deseja fazer? ");
 
+        // O 'switch' direciona a escolha do usuário para a função correta.
         switch (opcao) {
             case '1': adicionarTarefa(); break;
             case '2': listarTarefas(); break;
@@ -167,8 +171,8 @@ function menu() {
             case '5': console.log("\nSaindo do programa..."); break;
             default: console.log("\nErro: Opção inválida.");
         }
-    } while (opcao !== "5");
+    } while (opcao !== "5"); // O loop continua enquanto a opção não for '5'.
 }
 
-// Inicia o programa.
+// Inicia a aplicação chamando a função do menu.
 menu();
