@@ -55,7 +55,24 @@ function adicionarTarefa() {
 }
 
 function listarTarefas() {
-    console.log("\nFunção 'listarTarefas' ainda não implementada.");
+    console.log("\n--- LISTA DE TAREFAS ---");
+
+    // Primeiro, verificamos se o array de tarefas está vazio.
+    // Se estiver, exibimos uma mensagem e saímos da função com 'return'.
+    if (tarefas.length === 0) {
+        console.log("Nenhuma tarefa cadastrada.");
+        return;
+    }
+
+    // Se houver tarefas, usamos o método .forEach() para percorrer cada uma.
+    tarefas.forEach((tarefa) => {
+        // Usamos um operador ternário para definir o status visual da tarefa.
+        // Se 'tarefa.concluida' for 'true', status = "[X]". Senão, status = "[ ]".
+        const status = tarefa.concluida ? "(Concluída)" : "(Pendente)";
+        
+        // Imprimimos a tarefa formatada, mostrando o status, o ID e a descrição.
+        console.log(`${status} [${tarefa.id}] - ${tarefa.descricao}`);
+    });
 }
 
 function marcarComoConcluida() {
