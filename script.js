@@ -28,7 +28,30 @@ let proximoId = 1;
 
 // --- FUNÇÕES (esqueletos) ---
 function adicionarTarefa() {
-    console.log("\nFunção 'adicionarTarefa' ainda não implementada.");
+    // Pede ao usuário a descrição da tarefa.
+    const descricaoDigitada = prompt("Digite a descrição da nova tarefa: ");
+
+    // Validação robusta: checa se a entrada é nula (Ctrl+C) ou vazia/só com espaços.
+    if (!descricaoDigitada || !descricaoDigitada.trim()) {
+        console.log("\nErro: A descrição não pode ser vazia.");
+        return; // Sai da função se a descrição for inválida.
+    }
+
+    // Cria o novo objeto de tarefa com a estrutura planejada.
+    const novaTarefa = {
+        id: proximoId,
+        descricao: descricaoDigitada.trim(), // Salva a versão limpa
+        concluida: false // Novas tarefas sempre começam como não concluídas
+    };
+
+    // Adiciona o novo objeto ao nosso "banco de dados".
+    tarefas.push(novaTarefa);
+
+    // Incrementa o ID para a próxima tarefa ser única.
+    proximoId++;
+
+    // Fornece um feedback de sucesso para o usuário.
+    console.log(`\n✅ Tarefa "${novaTarefa.descricao}" adicionada com sucesso!`);
 }
 
 function listarTarefas() {
