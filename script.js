@@ -76,7 +76,37 @@ function listarTarefas() {
 }
 
 function marcarComoConcluida() {
-    console.log("\nFunção 'marcarComoConcluida' ainda não implementada.");
+    console.log("\n--- Marcar Tarefa como Concluída ---");
+
+    // Primeiro, checa se há tarefas para marcar. Se não houver, sai da função.
+    if (tarefas.length === 0) {
+        console.log("Nenhuma tarefa cadastrada para marcar.");
+        return;
+    }
+
+    // Reutilizamos a função listarTarefas() para mostrar as opções ao usuário.
+    listarTarefas();
+
+    // Pede ao usuário o ID da tarefa e converte para número.
+    const idDigitado = Number(prompt("Digite o ID da tarefa que deseja marcar como concluída: "));
+
+    // Valida se o ID digitado é um número válido.
+    if (isNaN(idDigitado)) {
+        console.log("\nErro: O ID deve ser um número.");
+        return;
+    }
+
+    // Usa o método .find() para encontrar a tarefa com o ID correspondente.
+    const tarefaEncontrada = tarefas.find(tarefa => tarefa.id === idDigitado);
+
+    // Verifica se a tarefa foi encontrada. .find() retorna 'undefined' se não encontrar.
+    if (!tarefaEncontrada) {
+        console.log("\nErro: Tarefa com o ID informado não foi encontrada.");
+    } else {
+        // Altera a propriedade 'concluida' do objeto encontrado para 'true'.
+        tarefaEncontrada.concluida = true;
+        console.log(`\n✅ Tarefa "${tarefaEncontrada.descricao}" marcada como concluída!`);
+    }
 }
 
 function removerTarefa() {
