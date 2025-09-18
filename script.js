@@ -110,7 +110,39 @@ function marcarComoConcluida() {
 }
 
 function removerTarefa() {
-    console.log("\nFunção 'removerTarefa' ainda não implementada.");
+    console.log("\n--- Remover Tarefa ---");
+
+    // Primeiro, checa se há tarefas para remover.
+    if (tarefas.length === 0) {
+        console.log("Nenhuma tarefa cadastrada para remover.");
+        return;
+    }
+
+    // Reutilizamos a função listarTarefas() para o usuário ver os IDs.
+    listarTarefas();
+
+    // Pede ao usuário o ID da tarefa a ser removida.
+    const idDigitado = Number(prompt("Digite o ID da tarefa que deseja remover: "));
+
+    // Valida se o ID digitado é um número válido.
+    if (isNaN(idDigitado)) {
+        console.log("\nErro: O ID deve ser um número.");
+        return;
+    }
+
+    // Usa o método .findIndex() para encontrar o ÍNDICE da tarefa com o ID correspondente.
+    // Ele retorna -1 se não encontrar.
+    const indiceEncontrado = tarefas.findIndex(tarefa => tarefa.id === idDigitado);
+
+    // Verifica se a tarefa foi encontrada.
+    if (indiceEncontrado === -1) {
+        console.log("\nErro: Tarefa com o ID informado não foi encontrada.");
+    } else {
+        // Usa o método .splice() para remover 1 item a partir do índice encontrado.
+        // Isso modifica o array 'tarefas' original.
+        tarefas.splice(indiceEncontrado, 1);
+        console.log("\n❌ Tarefa removida com sucesso!");
+    }
 }
 
 // --- LÓGICA PRINCIPAL (MENU) ---
